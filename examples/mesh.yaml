@@ -1,0 +1,37 @@
+# Partial mesh between 3 nodes with varied impairments.
+name: mesh-lab
+prefix: mesh
+
+nodes:
+  - name: alice
+  - name: bob
+  - name: carol
+
+links:
+  - endpoints:
+      - node: alice
+        ip: 10.10.0.1/24
+      - node: bob
+        ip: 10.10.0.2/24
+    impairment:
+      delay_ms: 30
+      loss_percent: 2
+
+  - endpoints:
+      - node: bob
+        ip: 10.10.1.1/24
+      - node: carol
+        ip: 10.10.1.2/24
+    impairment:
+      delay_ms: 80
+      delay_jitter_ms: 20
+      corrupt_percent: 0.1
+
+  - endpoints:
+      - node: alice
+        ip: 10.10.2.1/24
+      - node: carol
+        ip: 10.10.2.2/24
+    impairment:
+      delay_ms: 150
+      rate_kbit: 2048   # 2 Mbps bottleneck

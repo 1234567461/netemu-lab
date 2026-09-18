@@ -1,0 +1,40 @@
+# Star topology: one server with two clients, each link degraded differently.
+name: star-demo
+prefix: star
+default_image: nicolaka/netshoot:latest
+
+nodes:
+  - name: server
+    cpu: 0.5
+    memory: 256m
+  - name: client-a
+    cpu: 0.25
+    memory: 128m
+  - name: client-b
+    cpu: 0.25
+    memory: 128m
+
+links:
+  - endpoints:
+      - node: server
+        ip: 10.0.10.1/24
+      - node: client-a
+        ip: 10.0.10.2/24
+    impairment:
+      delay_ms: 50
+      delay_jitter_ms: 10
+      loss_percent: 0.5
+      rate_kbit: 10000   # 10 Mbps
+
+  - endpoints:
+      - node: server
+        ip: 10.0.20.1/24
+      - node: client-b
+        ip: 10.0.20.2/24
+    impairment:
+      delay_ms: 200
+      delay_jitter_ms: 50
+      loss_percent: 5
+      duplicate_percent: 1
+      reorder_percent: 25
+      reorder_gap: 3

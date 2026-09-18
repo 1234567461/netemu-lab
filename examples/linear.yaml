@@ -1,0 +1,48 @@
+# Linear chain: client -> edge -> core -> edge -> server
+name: linear-chain
+prefix: chain
+
+nodes:
+  - name: client
+  - name: edge-1
+  - name: core
+  - name: edge-2
+  - name: server
+
+links:
+  - endpoints:
+      - node: client
+        ip: 10.0.0.1/30
+      - node: edge-1
+        ip: 10.0.0.2/30
+    impairment:
+      delay_ms: 5
+      rate_kbit: 100000
+
+  - endpoints:
+      - node: edge-1
+        ip: 10.0.1.1/30
+      - node: core
+        ip: 10.0.1.2/30
+    impairment:
+      delay_ms: 2
+      rate_kbit: 1000000
+
+  - endpoints:
+      - node: core
+        ip: 10.0.2.1/30
+      - node: edge-2
+        ip: 10.0.2.2/30
+    impairment:
+      delay_ms: 2
+      rate_kbit: 1000000
+
+  - endpoints:
+      - node: edge-2
+        ip: 10.0.3.1/30
+      - node: server
+        ip: 10.0.3.2/30
+    impairment:
+      delay_ms: 10
+      loss_percent: 1
+      rate_kbit: 50000

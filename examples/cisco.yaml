@@ -1,0 +1,52 @@
+# Cisco-style lab: two IOS routers (via vrnetlab) connected through a
+# bottleneck link, plus two Linux hosts.
+#
+# Requires the corresponding vrnetlab images to be built/pulled locally:
+#   docker pull vrnetlab/cisco_iol:17.12.01
+#   docker pull vrnetlab/cisco_vios:15.9.3
+# See https://containerlab.dev/manual/vrnetlab/ for image build steps.
+name: cisco-lab
+prefix: cisco
+
+nodes:
+  - name: r1
+    type: cisco_iol
+    mgmt_ip: 10.0.99.11/24
+    cpu: 1
+    memory: 1024m
+  - name: r2
+    type: cisco_iol
+    mgmt_ip: 10.0.99.12/24
+    cpu: 1
+    memory: 1024m
+  - name: h1
+    type: linux
+  - name: h2
+    type: linux
+
+links:
+  # h1 <-> r1 (fast LAN)
+  - endpoints:
+      - { node: h1, ip: 10.1.1.10/24 }
+      - { node: r1, ip: 10.1.1.1/24 }
+    impairment:
+      delay_ms: 2
+      rate_kbit: 100000
+
+  # r1 <-> r2 (slow WAN with loss)
+  - endpoints:
+      - { node: r1, ip: 10.2.2.1/24 }
+      - { node: r2, ip: 10.2.2.2/24 }
+    impairment:
+      delay_ms: 120
+      delay_jitter_ms: 20
+      loss_percent: 2
+      rate_kbit: 5000
+
+  # r2 <-> h2 (fast LAN)
+  - endpoints:
+      - { node: r2, ip: 10.3.3.1/24 }
+      - { node: h2, ip: 10.3.3.10/24 }
+    impairment:
+      delay_ms: 2
+      rate_kbit: 100000
